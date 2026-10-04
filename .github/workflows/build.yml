@@ -1,0 +1,31 @@
+name: Build FNF APK
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Haxe
+        uses: krdlabo/setup-haxe@v1
+        with:
+          haxe-version: '4.2.5'
+
+      - name: Install libs
+        run: |
+          haxelib install hxcpp 4.3.2
+          haxelib install lime 8.1.1
+          haxelib install openfl 9.2.1
+
+      - name: Build Android
+        run: lime build android -release
+
+      - name: Save APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: fnf-apk
+          path: export/android/bin/*.apk
